@@ -1,0 +1,91 @@
+CREATE DATABASE Drozzina_Vinogradova
+
+CREATE TABLE Товар(
+КодТовара INT IDENTITY(1,1) PRIMARY KEY,
+Название VARCHAR(50),
+Цена MONEY,
+Тип VARCHAR(50),
+Сорт VARCHAR(50),
+Город VARCHAR(50),
+Остаток INT
+);
+
+
+CREATE TABLE Сотрудники(
+Фамилия CHAR(10),
+Имя CHAR(10),
+Город CHAR(10),
+PRIMARY KEY (Фамилия, Имя)
+);
+
+
+CREATE TABLE Сотрудники2(
+Фамилия CHAR(10),
+Имя CHAR(10),
+Город CHAR(10),
+Должность CHAR(10) NOT NULL,
+PRIMARY KEY (Фамилия, Имя)
+);
+
+
+CREATE TABLE Сотрудники3(
+Фамилия CHAR(10) NOT NULL UNIQUE,
+Имя CHAR(10) NOT NULL UNIQUE,
+Город CHAR(10),
+Должность CHAR(10) NOT NULL,
+PRIMARY KEY (Фамилия, Имя),
+);
+
+
+CREATE TABLE Сотрудники4(
+Фамилия CHAR(10) NOT NULL UNIQUE,
+Имя CHAR(10) NOT NULL UNIQUE,
+Город CHAR(10) DEFAULT 'Москва',
+Должность CHAR(10) NOT NULL,
+PRIMARY KEY (Фамилия, Имя)
+);
+
+
+CREATE TABLE Продавцы(
+КодПродавца INTEGER NOT NULL PRIMARY KEY,
+Фамилия CHAR(10) NOT NULL UNIQUE,
+Город CHAR(10),
+Комиссионные DECIMAL CHECK(Комиссионные < 1)
+);
+
+
+CREATE TABLE Продавцы2(
+КодПродавца INTEGER NOT NULL PRIMARY KEY,
+Фамилия CHAR(10) NOT NULL UNIQUE,
+Город CHAR(10),
+Комиссионные DECIMAL CHECK(Комиссионные < 1)
+);
+
+CREATE TABLE Клиент(
+КодКлиента INT IDENTITY(1,1) PRIMARY KEY,
+Фирма  VARCHAR(50) NOT NULL,
+Фамилия VARCHAR(50) NOT NULL,
+Город VARCHAR(50) NOT NULL,
+Телефон CHAR(10) NOT NULL,
+CHECK (Телефон LIKE '|1-9||0-9|-|0-9||0-9|-|0-9||0-9|'));
+
+
+CREATE TABLE Сделка(
+КодСделки INT IDENTITY(1,1) PRIMARY KEY,
+КодТовара INT NOT NULL,
+КодКлиента INT NOT NULL,
+Количество INT NOT NULL DEFAULT 0,
+Дата DATETIME NOT NULL DEFAULT GETDATE(),
+Остаток INT,
+CONSTRAINT fk_Товар FOREIGN KEY (КодТовара) REFERENCES Товар,
+CONSTRAINT fk_Клиент FOREIGN KEY (КодКлиента) REFERENCES Клиент);
+
+ALTER TABLE Сделка DROP CONSTRAINT fk_Товар;
+
+ALTER TABLE Сделка ADD CONSTRANT fk_Товар
+FOREIGN KEY (КодТовара) REFERENCES Товар
+ON UPDATE CASCADE ON DELETE CASCADE
+
+ALTER TABLE Товар ADD Налог AS Цена*0.05
+
+ALTER TABLE Товар DROP COLUMN Остаток
